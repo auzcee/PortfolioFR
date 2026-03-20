@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        if (!Schema::hasTable('job_listings')) {
+            Schema::create('job_listings', function (Blueprint $table) {
+                $table->id();
+                $table->string('title');
+                $table->string('company');
+                $table->string('location');
+                $table->string('salary')->nullable();
+                $table->text('description');
+                $table->enum('status', ['active', 'inactive', 'filled'])->default('active');
+                $table->boolean('is_featured')->default(false);
+                $table->foreignId('user_id')->nullable()->constrained();
+                $table->timestamps();
+                
+                $table->index(['status', 'created_at']);
+            });
+        }
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('job_listings');
+    }
+};
